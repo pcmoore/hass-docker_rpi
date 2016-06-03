@@ -1,0 +1,5 @@
+#!/bin/bash
+
+exec fakechroot fakeroot debootstrap \
+	--variant=minbase jessie ./raspbian-jessie_root
+
