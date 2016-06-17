@@ -1,6 +1,8 @@
 FROM raspbian-jessie
 MAINTAINER Paul Moore <paul@paul-moore.com>
 
+# TODO: move the python-openzwave setup/build to a script
+
 # configuration directory
 RUN mkdir -p /srv/config
 VOLUME /srv/config

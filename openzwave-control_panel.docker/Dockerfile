@@ -1,6 +1,8 @@
 FROM raspbian-jessie
 MAINTAINER Paul Moore <paul@paul-moore.com>
 
+# TODO: move the ozwcp setup to a script which we ADD to the container
+
 # configuration directory
 RUN mkdir -p /srv/config
 VOLUME /srv/config
