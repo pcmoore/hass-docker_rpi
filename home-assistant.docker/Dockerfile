@@ -14,18 +14,20 @@ RUN mkdir -p /srv/workdir
 RUN mkdir -p /srv/builddir
 WORKDIR /srv/builddir
 
-# install system tools
+# bust the cache and update the base system
+RUN date > /tmp/cache_busting.timestamp
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends wget git unzip sed
+	apt-get upgrade -y --no-install-recommends
+
+# install system tools
+RUN apt-get install -y --no-install-recommends wget git unzip sed
 
 # install python3 basics
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends python3 python3-pip
+RUN apt-get install -y --no-install-recommends python3 python3-pip
 
 # install python-openzwave
 #  -> https://github.com/OpenZWave/python-openzwave
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends make gcc g++ libudev-dev
+RUN apt-get install -y --no-install-recommends make gcc g++ libudev-dev
 ADD https://github.com/OpenZWave/python-openzwave/archive/master.zip .
 RUN unzip -q master.zip
 RUN basename $(ls -1 python-openzwave-master/archives/python-openzwave-* | sort -V | tail -n 1) | sed -e 's/.tgz$//' > python-openzwave.version

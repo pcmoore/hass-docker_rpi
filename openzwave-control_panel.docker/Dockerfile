@@ -14,28 +14,30 @@ RUN mkdir -p /srv/workdir
 RUN mkdir -p /srv/builddir
 WORKDIR /srv/builddir
 
-# install system tools
+# bust the cache and update the base system
+RUN date > /tmp/cache_busting.timestamp
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends wget git sed gawk
+	apt-get upgrade -y --no-install-recommends
+
+# install system tools
+RUN apt-get install -y --no-install-recommends wget git sed gawk
 
 # install python3 basics
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends python3 python3-pip
+RUN apt-get install -y --no-install-recommends python3 python3-pip
 
 # install openzwave
 #  -> https://github.com/OpenZWave/open-zwave
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends make gcc g++ libudev-dev
+RUN apt-get install -y --no-install-recommends make gcc g++ libudev-dev
 RUN git clone https://github.com/OpenZWave/open-zwave.git
 RUN (cd open-zwave; make)
 
 # install openzwave-controlpanel
 #  -> https://github.com/OpenZWave/open-zwave-control-panel
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends \
-	        libgnutls-deb0-28 libgnutlsxx28 libgnutls28-dev \
-	        libmicrohttpd10 libmicrohttpd-dev
+RUN apt-get install -y --no-install-recommends \
+        libgnutls-deb0-28 libgnutlsxx28 libgnutls28-dev \
+        libmicrohttpd10 libmicrohttpd-dev
 RUN git clone https://github.com/OpenZWave/open-zwave-control-panel.git
+ADD https://raw.githubusercontent.com/OpenZWave/open-zwave-control-panel/c243d3722e81ee69d400c36d01e10a372f10c8bd/Makefile open-zwave-control-panel
 RUN (cd open-zwave-control-panel; sed -e 's/^OPENZWAVE := .*/OPENZWAVE := ..\/open-zwave\//' -i Makefile)
 RUN (cd open-zwave-control-panel; make)
 RUN (cd open-zwave-control-panel; ln -s ../open-zwave/config config)
